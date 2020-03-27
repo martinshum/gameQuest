@@ -30,14 +30,17 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.player = Player(self)
         self.all_sprites.add(self.player)
-        ground = Platform(0, Height-40, Width, 40)
+        ground = Platform(0, HEIGHT-40, WIDTH, 40)
         plat1 = Platform(200, 400, 150, 20)
+        plat2 = Platform(150, 300, 150, 20)
         self.all_sprites.add(ground)
         self.platforms.add(ground)
         self.all_sprites.add(plat1)
         self.platforms.add(plat1)
-        # self.all_sprites.add(plat2)
-        # self.platforms.add(plat2)
+        self.all_sprites.add(plat2)
+        self.platforms.add(plat2)
+        # for plat in range(1,10):
+        #     plat = Platform(random.randint(0, WIDTH), random.randint(0,HEIGHT))
         self.run()
 
     def run(self):
