@@ -19,23 +19,28 @@ class Player(Sprite):
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
-    def myMethod(self):
-        pass
+        self.hitpoints = 100
+    def pew(self):
+        lazer = Pewpew(self.game, self.pos.x, self.pos.y, 10, 10)
+        # print("trying to pewpewpew")
+        self.game.all_sprites.add(lazer)
+        self.game.platforms.add(lazer)
+        self.game.projectiles.add(lazer)
     def jump(self):
         self.rect.x += 1
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits: 
-            self.vel.y = -20
-
+            self.vel.y = -15
     def update(self):
-        self.acc = vec(0, 0)
+        self.acc = vec(0, 0.5)
         keys = pg.key.get_pressed()
         if keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
         if keys[pg.K_d]:
             self.acc.x = PLAYER_ACC
         if keys[pg.K_w]:
+            self.pew()
             self.acc.y = -PLAYER_ACC
         if keys[pg.K_s]:
             self.acc.y = PLAYER_ACC
@@ -44,7 +49,7 @@ class Player(Sprite):
 
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.acc.y += self.vel.y * PLAYER_FRICTION
+        # self.acc.y += self.vel.y * PLAYER_FRICTION
         # equations of motion
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
@@ -67,3 +72,16 @@ class Platform(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+class Pewpew(Sprite):
+    def __init__(self, game, x, y, w, h):
+        Sprite.__init__(self)
+        self.image = pg.Surface((w, h))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+    def update(self):
+        self.rect.y += 5
+
+
