@@ -32,6 +32,8 @@ class Player(Sprite):
         self.rect.x -= 1
         if hits: 
             self.vel.y = -15
+    def brake(self):
+        self.vel.x = 0
     def update(self):
         self.acc = vec(0, 0.5)
         keys = pg.key.get_pressed()
@@ -46,6 +48,8 @@ class Player(Sprite):
             self.acc.y = PLAYER_ACC
         if keys[pg.K_SPACE]:
             self.jump()
+        if keys[pg.K_LSHIFT]:
+            self.brake()
 
         # apply friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
