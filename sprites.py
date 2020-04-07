@@ -32,6 +32,7 @@ class Player(Sprite):
         self.rect.x -= 1
         if hits: 
             self.vel.y = -15
+# sets the velocity.x of the player to 0
     def brake(self):
         self.vel.x = 0
     def update(self):
@@ -48,6 +49,7 @@ class Player(Sprite):
             self.acc.y = PLAYER_ACC
         if keys[pg.K_SPACE]:
             self.jump()
+# press the key for the function brake
         if keys[pg.K_LSHIFT]:
             self.brake()
 
