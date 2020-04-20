@@ -4,14 +4,16 @@
 TITLE = "Jumpy!"
 WIDTH = 480
 HEIGHT = 600
-FPS = 60
+FPS = 80
+# changed the FPS to look for some significiant difference but i didn't find anything
 
 # Environment options
 GRAVITY = -9.8
 
 # Player properties
 PLAYER_ACC = 0.5
-PLAYER_FRICTION = -0.01
+# adjusted friction for easier control of the character
+PLAYER_FRICTION = -0.05
 
 # define colors
 WHITE = (255, 255, 255)
