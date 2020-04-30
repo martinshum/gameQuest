@@ -84,9 +84,10 @@ class Game:
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
                     print(len(self.platforms)
-    ''' this if statement was working until I changed something in sprite
-     i changed the thing back to what it was before but this code is still broken
-     if i was to continue with this project I would fix this and add movement'''
+# this if statement was working until I changed something in sprite
+# i changed the thing back to what it was before but this code is still broken if i
+# was to continue with this project I would fix this and add movement 
+
         if len(self.platforms) < 8:
             plat = Platform(random.randint(15, WIDTH-200), random.randint(100,HEIGHT), random.randint(50,100), 20)
             self.all_sprites.add(plat)
