@@ -7,6 +7,7 @@ import pygame as pg
 from pygame.sprite import Sprite
 import random
 
+# screen dimensions and fps
 WIDTH = 480
 HEIGHT = 600
 FPS = 60
@@ -40,6 +41,8 @@ class Player(Sprite):
         self.speedx = 0
         self.speedy = 0
         keystate = pg.key.get_pressed()
+        if keystate[pg.K_w]:
+            self.pew()
         if keystate[pg.K_a]:
             self.speedx = -8
         if keystate[pg.K_d]:
@@ -50,9 +53,57 @@ class Player(Sprite):
         #     self.speedy = 8
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+# this uses the lazer class to make this a function of the player class
+    def pew(self):
+        lazer = Lazer(self.rect.centerx, self.rect.top)
+        all_sprites.add(lazer)
+        lazers.add(lazer)
 
+class Mob(Sprite):
+    def __init__(self):
+        Sprite.__init__(self)
+        self.image = pg.Surface((40,40))
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(0, WIDTH-self.rect.width)
+        self.rect.y = random.randrange(0, 240)
+        self.speedx = random.randrange(1,10)
+        self.speedy = random.randrange(1,10)
+    def update(self):
+        self.rect.x += self.speedx
+        if self.rect.x > WIDTH or self.rect.x < 0:
+            self.speedx*=-1
+            self.rect.y += 25
+        if self.rect.y > HEIGHT:
+            self.rect.y = -25
+            self.rect.x = random.randrange(0, WIDTH-self.rect.width)
+    # lazer class that creates the lazer
+class Lazer(Sprite):
+    def __init__(self, x, y):
+        Sprite.__init__(self)
+        self.image = pg.Surface((5,25))
+        self.image.fill(BLUE)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -10
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.bottom < 0:
+            self.kill()
+
+# where all the new things are created for the game
 all_sprites = pg.sprite.Group()
+mobs = pg.sprite.Group()
+lazers = pg.sprite.Group()
 player = Player()
+lazer = Lazer(player.rect.x, player.rect.y)
+all_sprites.add(lazer)
+# this summons the mobs and if you change the range you can add or subtract mods
+for i in range(0,8):
+    mob = Mob()
+    all_sprites.add(mob)
+    mobs.add(mob)
 all_sprites.add(player)
 
 # the game loop
@@ -65,8 +116,14 @@ while running:
         if event.type == pg.QUIT:
             running = False
 
-    # update
+    # update all the sprites
     all_sprites.update()
+    # this checks for collissions and when mobs and lazers hit both are gone
+    hits = pg.sprite.groupcollide(mobs, lazers, True, True)
+# when a mob hits the player the if statement makes the game stop
+    hits = pg.sprite.spritecollide(player, mobs, False)
+    if hits:
+        running = False
 
     # Draw
     screen.fill(RED)
