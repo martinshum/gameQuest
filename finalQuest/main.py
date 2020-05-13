@@ -1,6 +1,7 @@
 # KidsCanCode - Game Development with Pygame video series
 # Shmup game - part 1
 # Video link: https://www.youtube.com/watch?v=nGufy7weyGY
+# source code from in class with Mr. Cozort
 # Player sprite and movement
 import pygame as pg
 from pygame.sprite import Sprite
@@ -26,6 +27,7 @@ game_dir = path.join(path.dirname(__file__))
 
 # load all images here - background, player, mobs, lazer
 background_image = pg.image.load(game_dir + "/img/bg.png")
+# two backgrounds for scrolling screen
 background_rect = background_image.get_rect()
 background_rect2 = background_image.get_rect()
 player_image = pg.image.load(game_dir + "/img/player.png")
@@ -111,7 +113,7 @@ class Mob(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(0, WIDTH-self.rect.width)
         self.rect.y = random.randrange(0, 240)
-        self.speedx = random.randrange(1,10)
+        self.speedx = random.randrange(0,10)
         self.speedy = random.randrange(0, 10)
     def pew(self):
         spit = Spit(self.rect.centerx, self.rect.top)
@@ -128,6 +130,9 @@ class Mob(Sprite):
         if self.rect.y > HEIGHT:
             self.rect.y = -25
             self.rect.x = random.randrange(0, WIDTH-self.rect.width)
+# freezes the mobs when the player's shield is gone
+        if player.shield == 0:
+            self.speedx = 0
     # lazer class that creates the lazer
 class Lazer(Sprite):
     def __init__(self, x, y):
@@ -194,12 +199,7 @@ while running:
     hits = pg.sprite.spritecollide(player, spits, False)
 
     if hits:
-        player.shield -= 10
-
-    if player.shield == 0:
-        mob.speedx = 0
-
-
+        player.shield -= 5
 
 
 
@@ -213,11 +213,11 @@ while running:
             mob = Mob()
             all_sprites.add(mob)
             mobs.add(mob)
-
+# creates a scrolling background
     background_rect2.y = background_rect.y - 600
     background_rect.y += player.speedy
     background_rect2.y += player.speedy
-
+# swaps the background 1 with background 2 which makes the scrolling background
     if background_rect2.y >- 0:
         background_rect.y = background_rect.y -600
 
