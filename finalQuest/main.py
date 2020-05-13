@@ -81,7 +81,7 @@ class Player(Sprite):
         self.speedx = 0
         # self.speedy = 0
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_w]:
+        if keystate[pg.K_SPACE]:
             self.pew()
         if keystate[pg.K_a]:
             self.speedx = -8
@@ -104,6 +104,37 @@ class Player(Sprite):
             lazers.add(lazer)
             self.ammo -=1
 
+class Player2(Sprite):
+    def __init__(self):
+        Sprite.__init__(self)
+        self.image = pg.transform.scale(player_image, (50, 40))
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH / 2
+        self.rect.bottom = HEIGHT - 10
+        self.speedx = 0
+        self.speedy = 10
+        self.shield = 100
+        self.hitpoints = 100
+        self.ammo = ammo
+    def update(self):
+        self.speedx = 0
+        # self.speedy = 0
+        keystate = pg.key.get_pressed()
+        if keystate[pg.K_SPACE]:
+            self.pew()
+        if keystate[pg.K_LEFT]:
+            self.speedx = -8
+        if keystate[pg.K_RIGHT]:
+            self.speedx = 8
+        self.rect.x += self.speedx
+# this uses the lazer class to make this a function of the player class
+    def pew(self):
+        if self.ammo > 0:
+            lazer = Lazer(self.rect.centerx, self.rect.top)
+            all_sprites.add(lazer)
+            lazers.add(lazer)
+            self.ammo -=1
 
 class Mob(Sprite):
     def __init__(self):
@@ -113,7 +144,7 @@ class Mob(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(0, WIDTH-self.rect.width)
         self.rect.y = random.randrange(0, 240)
-        self.speedx = random.randrange(0,10)
+        self.speedx = random.randrange(1,10)
         self.speedy = random.randrange(0, 10)
     def pew(self):
         spit = Spit(self.rect.centerx, self.rect.top)
@@ -132,6 +163,8 @@ class Mob(Sprite):
             self.rect.x = random.randrange(0, WIDTH-self.rect.width)
 # freezes the mobs when the player's shield is gone
         if player.shield == 0:
+            self.speedx = 0
+        if player2.shield == 0:
             self.speedx = 0
     # lazer class that creates the lazer
 class Lazer(Sprite):
@@ -167,12 +200,14 @@ all_sprites = pg.sprite.Group()
 mobs = pg.sprite.Group()
 lazers = pg.sprite.Group()
 player = Player()
+player2 = Player2()
 spits = pg.sprite.Group()
 all_sprites.add(player)
 freezes = pg.sprite.Group()
 # lazer = Lazer(player.rect.x, player.rect.y)
 # all_sprites.add(lazer)
 # this summons the mobs and if you change the range you can add or subtract mods
+
 for i in range(0,3):
     mob = Mob()
     all_sprites.add(mob)
@@ -196,10 +231,16 @@ while running:
     if hits:
         score += 100
         player.ammo +=100
+        player2.ammo +=100
     hits = pg.sprite.spritecollide(player, spits, False)
 
     if hits:
         player.shield -= 5
+    hits = pg.sprite.spritecollide(player2, spits, False)
+    if hits:
+        player2.shield -= 5
+    if score == 1000:
+        all_sprites.add(player2)
 
 
 
@@ -229,6 +270,8 @@ while running:
     draw_text(screen, str(player.ammo), 24, WIDTH / 4, 10)
     draw_text(screen, str(player.hitpoints), 16, player.rect.x, player.rect.y)
     draw_shield_bar(screen, 5, 5, player.shield)
+    if score > 1000:
+        draw_shield_bar(screen, 380, 5, player2.shield)
     all_sprites.draw(screen)
     pg.display.flip()
 
