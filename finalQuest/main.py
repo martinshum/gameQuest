@@ -1,7 +1,7 @@
 # KidsCanCode - Game Development with Pygame video series
 # Shmup game - part 1
 # Video link: https://www.youtube.com/watch?v=nGufy7weyGY
-# source code from in class with Mr. Cozort
+# source code from in class with Mr. Cozort and KidsCanCode 
 # Player sprite and movement
 import pygame as pg
 from pygame.sprite import Sprite
@@ -44,7 +44,7 @@ clock = pg.time.Clock()
 
 # utils
 font_name = pg.font.match_font('arial')
-
+# this is for draw texts that i used for ammo and socre
 def draw_text(surf, text, size, x, y):
     font = pg.font.Font(font_name, size)
     text_surface = font.render(text, True, WHITE)
@@ -52,7 +52,7 @@ def draw_text(surf, text, size, x, y):
     text_rect.midtop = (int(x), int(y))
     surf.blit(text_surface, text_rect)
 
-
+# shield bar for each of the players player 1 in top left and player 2 in top right
 def draw_shield_bar(surf, x, y, pct):
     if pct < 0:
         pct = 0
@@ -64,6 +64,7 @@ def draw_shield_bar(surf, x, y, pct):
     pg.draw.rect(surf, GREEN, fill_rect)
     pg.draw.rect(surf, WHITE, outline_rect, 2)
 
+# player class which is all the details of player 1 
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
@@ -104,6 +105,7 @@ class Player(Sprite):
             lazers.add(lazer)
             self.ammo -=1
 
+# same details as player 1 but for player 2 and different controls. 
 class Player2(Sprite):
     def __init__(self):
         Sprite.__init__(self)
@@ -135,7 +137,7 @@ class Player2(Sprite):
             all_sprites.add(lazer)
             lazers.add(lazer)
             self.ammo -=1
-
+# mob class sprite 
 class Mob(Sprite):
     def __init__(self):
         Sprite.__init__(self)
@@ -166,7 +168,7 @@ class Mob(Sprite):
             self.speedx = 0
         if player2.shield == 0:
             self.speedx = 0
-    # lazer class that creates the lazer
+# lazer class that creates the lazer used in the players
 class Lazer(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -180,6 +182,7 @@ class Lazer(Sprite):
         self.rect.y += self.speedy
         if self.rect.bottom < 0:
             self.kill()
+# creates the mobs weappon which they spit down on players
 class Spit(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
@@ -194,6 +197,11 @@ class Spit(Sprite):
         self.rect.y += self.speedy
         if self.rect.y < 0:
             self.kill()
+# creates a bigger spit ball and makes it hader for the player to dodge based on the score of the player
+        if score > 1000:
+            self.image = pg.transform.scale(spit_img, (40, 40))
+        if score > 2000
+            self.image = pg.transform.scale(spit_img, (50, 50))
             # print(len(lazers))
 # where all the new things are created for the game
 all_sprites = pg.sprite.Group()
@@ -208,6 +216,7 @@ freezes = pg.sprite.Group()
 # all_sprites.add(lazer)
 # this summons the mobs and if you change the range you can add or subtract mods
 
+# creates the first of the mobs / 3 of them
 for i in range(0,3):
     mob = Mob()
     all_sprites.add(mob)
@@ -232,23 +241,23 @@ while running:
         score += 100
         player.ammo +=100
         player2.ammo +=100
+# takes away shield from player 1 or player 2 if they are hit with a spit from the mob
     hits = pg.sprite.spritecollide(player, spits, False)
-
     if hits:
         player.shield -= 5
     hits = pg.sprite.spritecollide(player2, spits, False)
     if hits:
         player2.shield -= 5
+# adds in player 2 when the score equals 1000
     if score == 1000:
         all_sprites.add(player2)
-
 
 
 # when a mob hits the player the if statement makes the game stop
     hits = pg.sprite.spritecollide(player, mobs, False)
     if hits:
         running = False
-
+# when all the mobs are gone spawn more mobs in 8 this time
     if len(mobs) == 0:
         for i in range(0,8):
             mob = Mob()
@@ -270,6 +279,7 @@ while running:
     draw_text(screen, str(player.ammo), 24, WIDTH / 4, 10)
     draw_text(screen, str(player.hitpoints), 16, player.rect.x, player.rect.y)
     draw_shield_bar(screen, 5, 5, player.shield)
+    # this creates the shield bar for player 2
     if score > 1000:
         draw_shield_bar(screen, 380, 5, player2.shield)
     all_sprites.draw(screen)
